@@ -8,6 +8,8 @@ Created on Sat Apr 18 16:59:20 2020
 # This file includes preparing the data, encoding and modeling
 # To predict two type of activity. Click = 0 , Swipe = 1.
 # put this file outside the filtered_traces folder
+
+# Pass the list of directory paths to gestures_array_to_vector to get dataset for RNN model
 import os
 import json
 from matplotlib import pyplot as plt
