@@ -8,8 +8,6 @@ Created on Sat Apr 18 16:59:20 2020
 # This file includes preparing the data, encoding and modeling
 # To predict two type of activity. Click = 0 , Swipe = 1.
 # put this file outside the filtered_traces folder
-
-# Pass the list of directory paths to gestures_array_to_vector to get dataset for RNN model
 import os
 import json
 from matplotlib import pyplot as plt
@@ -51,6 +49,7 @@ def gestures_to_vectors(gestures_dir):
 # return[1] is only 3 dim vector representing activity. I haven't used it, but it may be useful later.
            
 def gestures_array_to_vector(gestures_dir_array):
+    #print(gestures_dir_array)
     res = []
     res_y = []
     for gestures_dir in gestures_dir_array:
@@ -192,3 +191,15 @@ plt.plot(r.history['acc'], label = 'train')
 plt.plot(r.history['val_acc'], label = 'test')
 plt.legend()
 f2.show()
+
+
+#prediction test
+
+test = ['filtered_traces/com.linkedin.android/trace_0/gestures.json']
+res = gestures_array_to_vector(test)
+#testing for a ui
+#The model just predict every next activity to 0
+for i in range(len(res[0][0])):
+    x = res[0][0][i].reshape(1,1,67)
+    yhat = model.predict(x)
+    print (yhat.argmax(axis=-1))
