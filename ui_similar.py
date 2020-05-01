@@ -2,28 +2,32 @@
 """
 Created on Mon Mar  9 13:59:31 2020
 
-@author: CanXd
+@author: Xueyuan Chen
 """
 
 import numpy as np
 import json
-"""
 import pandas as pd
 import warnings
 warnings.filterwarnings('ignore')
-"""
+
 
 # Opening JSON file and loading the data 
 # into the variable data 
-with open('ui_names.json') as json_file: 
-	data_names = json.load(json_file) 
-ui_names = data_names['ui_names']
-ui_names = np.array(ui_names)
+with open('ui_layout_vectors/ui_names.json') as json_file: 
+    data_names = json.load(json_file) 
 
-#names = pd.DataFrame(ui_names, columns = ['name'])
+#ui names dataframe
+names = data_names['ui_names']
+names = np.array(names)
+ui_names = pd.DataFrame(names, columns = ['name'])
 
-#ui vectors
-ui_vectors = np.load('ui_vectors.npy')
+#ui details dataframe
+ui_details = pd.read_csv('ui_details.csv')
+ui_details.columns = ['ui_num','package_name','interaction_trace','ui_trace_num']
+#get index of file
+idx = ui_names.index[ui_names['name']=='11374.png']
+print(idx[0])
 
 """
 #Tried kmean cluster
@@ -58,11 +62,10 @@ for axi, center in zip(ax.flat, centers):
 import pickle
 import faiss
 
-"""
+
 #Create pickle data file
-with open('ui.pickle', 'wb') as f:
-    pickle.dump({"name": ui_names, "vector": ui_vectors}, f)
-"""
+#with open('ui.pickle', 'wb') as f:
+#    pickle.dump({"name": ui_names, "vector": ui_vectors}, f)
 
 def load_data():
     with open('ui.pickle', 'rb') as f:
@@ -81,7 +84,8 @@ class ExactIndex():
     def build(self):
         self.index = faiss.IndexFlatL2(self.dimension,)
         self.index.add(self.vectors)
-        
+
+    #k: number of retrieved UIs        
     def query(self, vectors, k=15):
     	#print(vectors)
     	v = np.array([vectors])
@@ -92,4 +96,16 @@ class ExactIndex():
 index = ExactIndex(data_ui["vector"], data_ui["name"])
 index.build()
 
-print(index.query(data_ui['vector'][43183]))
+#get retrieved UIs
+#the first ui is the query UI
+ui_query = index.query(data_ui['vector'][idx[0]])
+#print(ui_query)
+
+#get package names of chosen UIs
+import re
+uipackages = []
+for ui in ui_query:
+    uinum = int(re.search(r'\d+', ui).group())
+    package = ui_details[ui_details['ui_num']==uinum]['package_name'].values
+    uipackages.append(package)
+print(uipackages)
