@@ -129,13 +129,13 @@ import matplotlib.pyplot as plt
 # M = number of hidden units
 # K = number of output units
 N = 1
-T = 3
+T = 1
 D = 67
 M = 10
 K = 2
 
 i = Input(shape = (T,D))
-x = LSTM(M, return_sequences=True)(i)
+x = SimpleRNN(M, return_sequences=True)(i)
 x = GlobalMaxPool1D()(x)
 x = Dropout(0.5)(x)
 x = Dense(K,activation = 'relu')(x)
@@ -164,7 +164,7 @@ def split_dataset_array(dataset_array, time_step):
 
 
 X, y = split_dataset_array(vectors_array, T)
-#print(X.shape)
+print(X.shape)
 #print(y.shape)
 #print(y[:10])
 r = model.fit(X, y, epochs = 100, validation_split = 0.4)
@@ -184,3 +184,14 @@ plt.plot(r.history['acc'], label = 'train')
 plt.plot(r.history['val_acc'], label = 'test')
 plt.legend()
 f2.show()
+
+
+test = ['filtered_traces/com.linkedin.android/trace_0/gestures.json']
+res = gestures_array_to_vector(test)
+#testing for a ui
+#The model just predict every next activity to 0
+for i in range(len(res[0][0])):
+    x = res[0][0][i].reshape(1,1,67)
+    yhat = model.predict(x)
+    print (yhat)
+
