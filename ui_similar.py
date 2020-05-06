@@ -11,6 +11,8 @@ import pandas as pd
 import warnings
 warnings.filterwarnings('ignore')
 
+# ui vectors
+ui_vectors = np.load('ui_layout_vectors/ui_vectors.npy')
 
 # Opening JSON file and loading the data 
 # into the variable data 
@@ -31,25 +33,20 @@ print(idx[0])
 
 """
 #Tried kmean cluster
-
-
 #choose ui
 chosen_index = 3
 chosen_ui = ui_vectors[chosen_index,:]
 #print(ui_vectors[3,:])
-
 # import KMeans
 from sklearn.cluster import KMeans
 kmeans = KMeans(n_clusters=20)
 clusters = kmeans.fit_predict(ui_vectors)
 print(kmeans.cluster_centers_.shape)
 cluFrame = pd.DataFrame(clusters, columns = ['cluster'])
-
 #combine ui names and cluster results
 cluFrame = pd.merge(names, cluFrame, on=None, left_on=None, right_on=None, left_index=True, right_index=True)
 cluFrame['cluster'].value_counts()
 print(cluFrame['cluster'].value_counts())
-
 import matplotlib.pyplot as plt
 import seaborn as sns; sns.set()  # for plot styling
 fig, ax = plt.subplots(2, 5, figsize=(8, 3))
@@ -57,6 +54,7 @@ centers = kmeans.cluster_centers_.reshape(20, 8, 8)
 for axi, center in zip(ax.flat, centers):
     axi.set(xticks=[], yticks=[])
     axi.imshow(center, interpolation='nearest', cmap=plt.cm.binary)
+"""
 
 """
 import pickle
@@ -89,9 +87,9 @@ class ExactIndex():
     def query(self, vectors, k=15):
     	#print(vectors)
     	v = np.array([vectors])
-        distances, indices = self.index.search(v, k)
+    	distances, indices = self.index.search(v, k)
         # I expect only query on one vector thus the slice
-        return [self.labels[i] for i in indices[0]]
+    	return [self.labels[i] for i in indices[0]]
 
 index = ExactIndex(data_ui["vector"], data_ui["name"])
 index.build()
@@ -109,3 +107,4 @@ for ui in ui_query:
     package = ui_details[ui_details['ui_num']==uinum]['package_name'].values
     uipackages.append(package)
 print(uipackages)
+"""
