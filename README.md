@@ -13,3 +13,4 @@ encoding_modeling.py is to predict next activity (click or swipe). It includes d
 encoding_modeling2.py is to predict the coordinates of next activity.
 encoding_modeling_similarUI.py is to predict next activity, but use similar UI as input dataset.
 ui_neighbors.py is to find similar UI using KNN.
+trace_explore.py is for trace data analysis.
